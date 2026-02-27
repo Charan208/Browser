@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Browser Control</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 820px; margin: 40px auto; }
+      textarea, input { width: 100%; margin: 8px 0; padding: 8px; }
+      button { padding: 8px 12px; }
+      pre { background: #f7f7f7; padding: 12px; overflow: auto; }
+    </style>
+  </head>
+  <body>
+    <h1>AI Browser Task Console</h1>
+    <p>Submit a production-safe task to the API service.</p>
+    <label>Target URL</label>
+    <input id="url" value="https://example.com" />
+    <label>Steps (JSON array)</label>
+    <textarea id="steps" rows="8">[{"action":"extract","selector":"h1"}]</textarea>
+    <button id="submit">Run Task</button>
+    <h2>Response</h2>
+    <pre id="output">{}</pre>
+
+    <script>
+      const output = document.getElementById('output');
+      document.getElementById('submit').addEventListener('click', async () => {
+        try {
+          const response = await fetch('http://localhost:3001/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              url: document.getElementById('url').value,
+              steps: JSON.parse(document.getElementById('steps').value)
+            })
+          });
+          output.textContent = JSON.stringify(await response.json(), null, 2);
+        } catch (error) {
+          output.textContent = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>
